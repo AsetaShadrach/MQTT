@@ -1,8 +1,11 @@
 from src.helpers import (
     client, 
-    MQTT_BROKER_URL,
     on_connect,
     on_message
+)
+from src.configs import (
+    MQTT_BROKER_PORT,
+    MQTT_BROKER_URL
 )
 
 client.on_connect = on_connect

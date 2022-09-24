@@ -16,23 +16,25 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, msg):
-    topic = msg.topic 
-    msg = msg.payload.decode()
-    data = json.loads(msg)
+    if msg.payload.decode().startswith('{'):
+        topic = msg.topic 
+        msg = msg.payload.decode()
+        data = json.loads(msg)
+        try:        
+            logging.info(" === Initiate saving record === ")
+            recording = Recording(
+                topic = topic,
+                value = float(data["value"]),
+                device_id = data["device_id"]
+            )
+            db.session.add(recording)
+            db.session.commit()
 
-    try:        
-        logging.info(" === Initiate saving record === ")
-        recording = Recording(
-            topic = topic,
-            value = float(data["value"]),
-            device_id = data["device_id"]
-        )
-        db.session.add(recording)
-        db.session.commit()
+            print("SUCCESSFULLY SAVED RECORD")
+            logging.info(f"Record with details {recording} saved")
 
-        logging.info(f"Record with details {recording} saved")
-
-    except Exception as e:
-        logging.error(e.with_traceback())
-
-
+        except Exception as e:
+            logging.error(e.with_traceback())
+        
+    else:
+        pass
