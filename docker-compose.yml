@@ -1,10 +1,27 @@
 version: "3.9"
 
-volumes:
-  postgres-db: {}
-
 services:
+  db:
+    image: postgres:14.5-alpine
+    environment:
+      # For postgres user access w/o password. Obviously not safe but allows easy elevated debugging.
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - 25050:5432
+    command: [ "-c", "max_connections=200" ]
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+
+  mqtt:
+      image: eclipse-mosquitto:latest
+      container_name: mqtt
+      ports:
+        - 1883:1883
+      restart: unless-stopped
+
   web:
+    image: python:3.8-alpine
+    container_name: mqtt_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,27 +30,12 @@ services:
     environment:
       FLASK_DEBUG: 1
       FLASK_APP: "app.py"
+    env_file:
+      - .env
     depends_on:
       - db
-  
-  db:
-    image: postgres:14.5-alpine
-    environment:
-      # For postgres user access w/o password. Obviously not safe but allows easy elevated debugging.
-      POSTGRES_HOST_AUTH_METHOD: trust
-    ports:
-      - ${POSTGRES_PORT:-25050}:5432
-    command: [ "-c", "max_connections=200" ]
-    volumes:
-      - postgres-db:/var/lib/postgresql/data
-
-  mqtt:
-      image: eclipse-mosquitto:latest
-      network_mode: bridge
-      container_name: mqtt
-      expose:
-        - 1883
-      ports:
-        - 1883:1883
-      restart: unless-stopped
-
+      - mqtt
+     
+volumes:
+  postgres-db: 
+    driver: local

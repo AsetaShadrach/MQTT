@@ -10,5 +10,5 @@ from src.configs import (
 
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(MQTT_BROKER_URL)
+client.connect(MQTT_BROKER_URL,MQTT_BROKER_PORT)
 client.loop_start()
