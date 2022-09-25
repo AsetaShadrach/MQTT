@@ -1,6 +1,6 @@
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy import ForeignKey, DateTime
-from sqlalchemy.sql import func
+from dataclasses import dataclass
 import datetime
 
 from enum import Enum
@@ -13,6 +13,7 @@ class Topic(Enum):
     TEMPERATURE = "TEMPERATURE"
     WATER_LEVEL = "WATER_LEVEL"
 
+@dataclass
 class Device(db.Model):
     __tablename__ = 'device'
 
@@ -25,26 +26,32 @@ class Device(db.Model):
     created_at = db.Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = db.Column(DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, name, topic, device_details=None):
+    def __init__(self, name, topic, token, device_details=None):
         self.name = name
-        # Check if this works
-        self.topic= Topic.value == topic
+        # TODO : use the enum class to populate this
+        self.topic= topic
+        self.token = token
         self.device_details = device_details
 
     def __str__(self):
-        return '<id:{0} , type:{1} , created_at {2}>'.format(self.id, self.type, self.created_at)
+        return '<id:{0} , type:{1} , created_at {2}>'.format(self.id, self.topic, self.created_at)
     
     def serialize(self):
         return {
-            'id': self.id, 
+            'id': str(self.id), 
             'name': self.name,
-            'type': self.topic,
-            'createdAt':self.created_at,
-            'updatedAt':self.updated_at,
+            'type': self.topic.value,
+            'createdAt':str(self.created_at),
+            'updatedAt':str(self.updated_at),
             'deviceDetails':self.device_details
         }
+    
+    @staticmethod
+    def serialize_list(l):
+        return [m.serialize() for m in l]
 
 
+@dataclass
 class Recording(db.Model):
     __tablename__ = 'recording'
 
@@ -67,9 +74,13 @@ class Recording(db.Model):
     
     def serialize(self):
         return {
-            'id': self.id, 
+            'id': str(self.id), 
             'device_id': self.device_id,
             'value':self.value,
-            'type': self.topic,
-            'createdAt':self.created_at
+            'topic': self.topic.value,
+            'createdAt':str(self.created_at)
         }
+    
+    @staticmethod
+    def serialize_list(l):
+        return [m.serialize() for m in l]

@@ -16,3 +16,8 @@ The migration script needs to be reviewed and edited, as Alembic has issues with
 Then you can apply the migration to the database:
 
 $ flask db upgrade
+
+### ToDO
+
+- Add pagination for get endpoints
+- Add authentication for all endpoints
