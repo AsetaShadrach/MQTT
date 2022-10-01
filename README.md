@@ -19,6 +19,11 @@ To run project:
 - With docker:<br>
   `docker-compose up --build`
 
+<font color='red'>DISCLAIMER</font> : THIS IS ONLY FOR DVELOPMENT <br>
+For both cases use the `NGROK` link generated as the base URL<br>
+e.g For a route `/home` if the ngrok generates `* ngrok tunnel "http://3735-102-1-138-209.ngrok.io" -> "http://127.0.0.1:5000"` <br>
+then the full link will be `http://3735-102-1-138-209.ngrok.io/home`
+
 ### TODO
 
 - Add pagination for get endpoints

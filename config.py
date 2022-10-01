@@ -1,5 +1,6 @@
 import os
-
+ 
+# WILL ADJUST ACCORDINGLY LATER
 class Config(object):
     DEBUG = False
     TESTING = False

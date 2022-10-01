@@ -66,6 +66,3 @@ def get_recording_by_id_(id):
    response = get_recording_by_id(id)   
    return jsonify(response), response["status"]
 
-
-if __name__ == '__main__':
-    app.run()

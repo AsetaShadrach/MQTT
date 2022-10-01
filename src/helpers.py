@@ -37,7 +37,7 @@ def on_message(client, userdata, msg):
             logging.info(f"Record with details {recording} saved")
 
         except Exception as e:
-            logging.error(e.with_traceback())
+            logging.error(e)
         
     else:
         pass
